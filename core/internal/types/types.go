@@ -12,6 +12,8 @@ type FileUploadRequest struct {
 type FileUploadResponse struct {
 	Error    string `json:"error,omitempty"`
 	Identity string `json:"identity"`
+	Filename string `json:"filename"`
+	Ext      string `json:"ext"`
 }
 
 type LoginReply struct {
@@ -56,5 +58,17 @@ type UserDetailReply struct {
 }
 
 type UserDetailRequest struct {
+	Identity string `json:"identity"`
+}
+
+type UserRepoSaveRequest struct {
+	ParentId           int    `json:"parentId"`
+	RepositoryIdentity string `json:"repositoryIdentity"`
+	Ext                string `json:"ext"`
+	Filename           string `json:"filename"`
+}
+
+type UserRepoSaveResponse struct {
+	Error    string `json:"error,omitempty"`
 	Identity string `json:"identity"`
 }

@@ -9,9 +9,9 @@ import (
 )
 
 type UserClaim struct {
-	Id       int
-	Identity string
-	Name string
+	Id       		int
+	Identity 		string
+	Name 				string
 	jwt.StandardClaims
 }
 

@@ -19,10 +19,19 @@ service core-api {
 	// register user
 	@handler RegisterUser
 	post /register/user (RegisterUserRequest) returns (RegisterUserResponse)
+}
 
+@server (
+	middleware: Auth
+)
+service core-api {
 	// file upload
 	@handler FileUpload
 	post /file/upload (FileUploadRequest) returns (FileUploadResponse)
+
+	// user file list
+	@handler UserRepoSave
+	post /user/repo/save (UserRepoSaveRequest) returns (UserRepoSaveResponse)
 }
 
 type LoginRequest {
@@ -79,6 +88,20 @@ type FileUploadRequest {
 }
 
 type FileUploadResponse {
+	Error    string `json:"error,omitempty"`
+	Identity string `json:"identity"`
+	Filename string `json:"filename"`
+	Ext      string `json:"ext"`
+}
+
+type UserRepoSaveRequest {
+	ParentId           int    `json:"parentId"`
+	RepositoryIdentity string `json:"repositoryIdentity"`
+	ext                string `json:"ext"`
+	Filename           string `json:"filename"`
+}
+
+type UserRepoSaveResponse {
 	Error    string `json:"error,omitempty"`
 	Identity string `json:"identity"`
 }
