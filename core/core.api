@@ -19,6 +19,10 @@ service core-api {
 	// register user
 	@handler RegisterUser
 	post /register/user (RegisterUserRequest) returns (RegisterUserResponse)
+
+	// file upload
+	@handler FileUpload
+	post /file/upload (FileUploadRequest) returns (FileUploadResponse)
 }
 
 type LoginRequest {
@@ -64,5 +68,18 @@ type RegisterUserRequest {
 
 type RegisterUserResponse {
 	Error string `json:"error,omitempty"`
+}
+
+type FileUploadRequest {
+	Hash     string `json:"hash, optional"`
+	Filename string `json:"filename, optional"`
+	Ext      string `json:"ext, optional"`
+	Size     int64  `json:"size, optional"`
+	Path     string `json:"path, optional"`
+}
+
+type FileUploadResponse {
+	Error    string `json:"error,omitempty"`
+	Identity string `json:"identity"`
 }
 

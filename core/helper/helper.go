@@ -1,19 +1,25 @@
 package helper
 
 import (
+	"context"
 	"crypto/md5"
 	"fmt"
+	"log"
+	"path"
 
 	"cloud-disk/core/define"
 
 	"crypto/tls"
 	"math/rand"
+	"net/http"
 	"net/smtp"
+	"net/url"
 	"time"
 
-	"github.com/jordan-wright/email"
 	"github.com/golang-jwt/jwt/v4"
-	
+	"github.com/jordan-wright/email"
+	"github.com/satori/go.uuid"
+	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
 func Md5(s string) string {
@@ -60,4 +66,28 @@ func MailCode(receiverEmail, code string) error {
 	}
 	return nil
 
+}
+
+func UUID() string {
+	return uuid.NewV4().String()
+}
+
+func UploadFile(r *http.Request) (string, error) {
+	log.Println("Cos bucket" + define.CosBucket)
+	u, _ := url.Parse(define.CosBucket)
+	b := &cos.BaseURL{BucketURL: u}
+	c := cos.NewClient(b, &http.Client{
+			Transport: &cos.AuthorizationTransport{
+					SecretID:  define.CosSecretId,  // 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参考 https://cloud.tencent.com/document/product/598/37140
+					SecretKey: define.CosSecretKey, // 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参考 https://cloud.tencent.com/document/product/598/37140
+			},
+	})
+
+	file, fileHeader, err := r.FormFile("file")
+	name := "cloud-disk/" + UUID() + path.Ext(fileHeader.Filename)
+	_, err = c.Object.Put(context.Background(), name, file, nil)
+	if err != nil {
+			panic(err)
+	}
+	return define.CosBucket + "/" + name, nil
 }

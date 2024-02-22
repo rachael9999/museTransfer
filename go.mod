@@ -12,10 +12,12 @@ require (
 	github.com/antlr/antlr4/runtime/Go/antlr v1.4.10 // indirect
 	github.com/br0xen/boltbrowser v0.0.0-20230531143731-fcc13603daaf // indirect
 	github.com/br0xen/termbox-util v0.0.0-20170904143325-de1d4c83380e // indirect
+	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/emicklei/proto v1.13.2 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gookit/color v1.5.4 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -23,13 +25,18 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/pgx/v5 v5.5.3 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/mozillazg/go-httpheader v0.4.0 // indirect
 	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/spf13/cobra v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.46 // indirect
 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/zeromicro/antlr v0.0.1 // indirect
