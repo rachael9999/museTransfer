@@ -1,0 +1,68 @@
+syntax = "v1"
+
+service core-api {
+	// user login
+	@handler UserLogin
+	post /user/login (LoginRequest) returns (LoginReply)
+
+	// user identity
+	@handler UserDetail
+	post /user/detail (UserDetailRequest) returns (UserDetailReply)
+
+	@handler CoreHandler
+	get /from/:name (Request) returns (Response)
+
+	// send code
+	@handler SendCodeRegister
+	post /register/mail/sendCode (SendCodeRequest) returns (SendCodeResponse)
+
+	// register user
+	@handler RegisterUser
+	post /register/user (RegisterUserRequest) returns (RegisterUserResponse)
+}
+
+type LoginRequest {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+}
+
+type LoginReply {
+	Token string `json:"token"`
+}
+
+type UserDetailRequest {
+	Identity string `json:"identity"`
+}
+
+type UserDetailReply {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
+type Request {
+	Name string `path:"name,options=you|me"`
+}
+
+type Response {
+	Message string `json:"message"`
+}
+
+type SendCodeRequest {
+	Email string `json:"email"`
+}
+
+type SendCodeResponse {
+	Error string `json:"error,omitempty"`
+}
+
+type RegisterUserRequest {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Code     string `json:"code"`
+}
+
+type RegisterUserResponse {
+	Error string `json:"error,omitempty"`
+}
+
