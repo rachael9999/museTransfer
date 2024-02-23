@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"time"
+	"errors"
 
 	"cloud-disk/core/helper"
 	"cloud-disk/core/internal/svc"
@@ -37,7 +38,7 @@ func (l *SendCodeRegisterLogic) SendCodeRegister(req *types.SendCodeRequest) (re
 		return nil, err
 	}
 	if has {
-		return &types.SendCodeResponse{Error: "The email has been registered"}, nil
+		return nil, errors.New("the email has been registered")
 	}
 	
 	code := helper.Code()

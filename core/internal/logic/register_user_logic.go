@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"time"
+	"errors"
 
 	"cloud-disk/core/internal/svc"
 	"cloud-disk/core/internal/types"
@@ -45,12 +46,13 @@ func (l *RegisterUserLogic) RegisterUser(req *types.RegisterUserRequest) (resp *
 	})
 
 	userName := &models.User{Name: req.Name}
+
 	has, err := l.svcCtx.Engine.Get(userName)
 	if err != nil {
 		return nil, err
 	}
 	if has {
-		return &types.RegisterUserResponse{Error: "The username has been registered"}, nil
+		return nil, errors.New("the name has been registered")
 	}
 
 	user := &models.User{Email: req.Email}
@@ -59,17 +61,17 @@ func (l *RegisterUserLogic) RegisterUser(req *types.RegisterUserRequest) (resp *
 		return nil, err
 	}
 	if has {
-		return &types.RegisterUserResponse{Error: "The email has been registered"}, nil
+		return nil, errors.New("the email has been registered")
 	}
 	
 
 	if err != nil {
-		return &types.RegisterUserResponse{Error: "The code is invalid"}, nil
+		return nil, err
 	}
 
 	// check if the code is expired
 	if time.Now().After(codeStruct.Expiration) {
-		return &types.RegisterUserResponse{Error: "The code is expired"}, nil
+		return nil, errors.New("the code is expired")
 	}
 
 	// hash the password
@@ -84,7 +86,6 @@ func (l *RegisterUserLogic) RegisterUser(req *types.RegisterUserRequest) (resp *
 		Password:  string(hashedPassword),
 		Email:     req.Email,
 		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
 	}
 
 	_, err = l.svcCtx.Engine.Insert(user)

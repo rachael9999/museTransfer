@@ -21,6 +21,7 @@ var (
 	CosSecretId  string
 	CosSecretKey string
 	CosBucket    string
+	PageSize		 int = 20
 )
 
 func init() {

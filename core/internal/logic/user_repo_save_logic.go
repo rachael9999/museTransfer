@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"cloud-disk/core/helper"
 	"cloud-disk/core/internal/svc"
@@ -33,6 +34,7 @@ func (l *UserRepoSaveLogic) UserRepoSave(req *types.UserRepoSaveRequest, userIde
 		RepositoryIdentity: 		req.RepositoryIdentity,
 		Ext: 										req.Ext,
 		Filename: 							req.Filename,
+		CreatedAt: 							time.Now(),
 	}
 	_, err = l.svcCtx.Engine.Insert(ur)
 	if err != nil {

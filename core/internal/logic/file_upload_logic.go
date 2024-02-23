@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"cloud-disk/core/helper"
 	"cloud-disk/core/internal/svc"
@@ -34,6 +35,7 @@ func (l *FileUploadLogic) FileUpload(req *types.FileUploadRequest) (resp *types.
 		Ext: 	 		req.Ext,
 		Size: 	 	req.Size,
 		Path: 	 	req.Path,
+		CreatedAt: time.Now(),
 	}
 
 	_, err = l.svcCtx.Engine.Insert(rp)

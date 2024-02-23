@@ -32,6 +32,19 @@ service core-api {
 	// user file list
 	@handler UserRepoSave
 	post /user/repo/save (UserRepoSaveRequest) returns (UserRepoSaveResponse)
+
+	// user file list
+	@handler UserRepoList
+	get /user/repo/list (UserRepoListRequest) returns (UserRepoListResponse)
+
+	@handler UserFileNameUpdate
+	post /user/file/name/update (UserFileNameUpdateRequest) returns (UserFileNameUpdateResponse)
+
+	@handler UserFolderCreate
+	post /user/folder/create (UserFolderCreateRequest) returns (UserFolderCreateResponse)
+
+	@handler UserFileDelete
+	post /user/file/delete (UserFileDeleteRequest) returns (UserFileDeleteResponse)
 }
 
 type LoginRequest {
@@ -41,6 +54,7 @@ type LoginRequest {
 
 type LoginReply {
 	Token string `json:"token"`
+	Error string `json:"error,omitempty"`
 }
 
 type UserDetailRequest {
@@ -50,6 +64,7 @@ type UserDetailRequest {
 type UserDetailReply {
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Error string `json:"error,omitempty"`
 }
 
 type Request {
@@ -104,5 +119,54 @@ type UserRepoSaveRequest {
 type UserRepoSaveResponse {
 	Error    string `json:"error,omitempty"`
 	Identity string `json:"identity"`
+}
+
+type UserRepoList {
+	Id                 int    `json:"id"`
+	Identity           string `json:"identity"`
+	repositoryIdentity string `json:"repositoryIdentity"`
+	Filename           string `json:"filename"`
+	Ext                string `json:"ext"`
+	Path               string `json:"path"`
+	Size               int64  `json:"size"`
+}
+
+type UserRepoListRequest {
+	Id   int `json:"id, optional"`
+	Page int `json:"page, optional"`
+	Size int `json:"size, optional"`
+}
+
+type UserRepoListResponse {
+	Error string          `json:"error,omitempty"`
+	Count int64           `json:"count"`
+	List  []*UserRepoList `json:"list"`
+}
+
+type UserFileNameUpdateRequest {
+	Identity string `json:"identity"`
+	Filename string `json:"filename"`
+}
+
+type UserFileNameUpdateResponse {
+	Error string `json:"error,omitempty"`
+}
+
+type UserFolderCreateRequest {
+	ParentId int    `json:"parentId"`
+	Filename string `json:"filename"`
+}
+
+type UserFolderCreateResponse {
+	Error    string `json:"error,omitempty"`
+	identity string `json:"identity"`
+}
+
+type UserFileDeleteRequest {
+	Identity string `json:"identity"`
+}
+
+type UserFileDeleteResponse {
+	Error string `json:"error,omitempty"`
 }
 

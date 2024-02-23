@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 type UserRepository struct {
 	Id								int
 	Identity					string
@@ -9,9 +11,9 @@ type UserRepository struct {
 	ParentId 					int
 	Ext								string
 	Filename					string
-	CreatedAt 				time.Time `xorm:"created_at"`
-	UpdatedAt 				time.Time `xorm:"updated_at"`
-	DeletedAt 				time.Time `xorm:"deleted_at"`
+	CreatedAt 				time.Time 
+	UpdatedAt 				time.Time 
+	DeletedAt 				time.Time
 }
 
 func (UserRepository) TableName() string {

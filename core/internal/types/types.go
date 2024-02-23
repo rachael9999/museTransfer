@@ -18,6 +18,7 @@ type FileUploadResponse struct {
 
 type LoginReply struct {
 	Token string `json:"token"`
+	Error string `json:"error,omitempty"`
 }
 
 type LoginRequest struct {
@@ -55,10 +56,60 @@ type SendCodeResponse struct {
 type UserDetailReply struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Error string `json:"error,omitempty"`
 }
 
 type UserDetailRequest struct {
 	Identity string `json:"identity"`
+}
+
+type UserFileDeleteRequest struct {
+	Identity string `json:"identity"`
+}
+
+type UserFileDeleteResponse struct {
+	Error string `json:"error,omitempty"`
+}
+
+type UserFileNameUpdateRequest struct {
+	Identity string `json:"identity"`
+	Filename string `json:"filename"`
+}
+
+type UserFileNameUpdateResponse struct {
+	Error string `json:"error,omitempty"`
+}
+
+type UserFolderCreateRequest struct {
+	ParentId int    `json:"parentId"`
+	Filename string `json:"filename"`
+}
+
+type UserFolderCreateResponse struct {
+	Error    string `json:"error,omitempty"`
+	Identity string `json:"identity"`
+}
+
+type UserRepoList struct {
+	Id                 int    `json:"id"`
+	Identity           string `json:"identity"`
+	RepositoryIdentity string `json:"repositoryIdentity"`
+	Filename           string `json:"filename"`
+	Ext                string `json:"ext"`
+	Path               string `json:"path"`
+	Size               int64  `json:"size"`
+}
+
+type UserRepoListRequest struct {
+	Id   int `json:"id, optional"`
+	Page int `json:"page, optional"`
+	Size int `json:"size, optional"`
+}
+
+type UserRepoListResponse struct {
+	Error string          `json:"error,omitempty"`
+	Count int64           `json:"count"`
+	List  []*UserRepoList `json:"list"`
 }
 
 type UserRepoSaveRequest struct {
