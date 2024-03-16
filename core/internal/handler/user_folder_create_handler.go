@@ -18,7 +18,7 @@ func UserFolderCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := logic.NewUserFolderCreateLogic(r.Context(), svcCtx)
-		resp, err := l.UserFolderCreate(&req, r.Header.Get("UserIdentity"))
+		resp, err := l.UserFolderCreate(&req, r.Header.Get("Identity"))
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

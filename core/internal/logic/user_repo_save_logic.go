@@ -26,10 +26,10 @@ func NewUserRepoSaveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 	}
 }
 
-func (l *UserRepoSaveLogic) UserRepoSave(req *types.UserRepoSaveRequest, userIdentity string) (resp *types.UserRepoSaveResponse, err error) {
+func (l *UserRepoSaveLogic) UserRepoSave(req *types.UserRepoSaveRequest, Identity string) (resp *types.UserRepoSaveResponse, err error) {
 	ur := &models.UserRepository{	
 		Identity: 							helper.UUID(),
-		UserIdentity: 					userIdentity,
+		UserIdentity: 					Identity,
 		ParentId: 							req.ParentId,
 		RepositoryIdentity: 		req.RepositoryIdentity,
 		Ext: 										req.Ext,

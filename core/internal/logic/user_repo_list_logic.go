@@ -25,7 +25,7 @@ func NewUserRepoListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 	}
 }
 
-func (l *UserRepoListLogic) UserRepoList(req *types.UserRepoListRequest, userIdentity string) (resp *types.UserRepoListResponse, err error) {
+func (l *UserRepoListLogic) UserRepoList(req *types.UserRepoListRequest, Identity string) (resp *types.UserRepoListResponse, err error) {
 	ufl := make([]*types.UserRepoList, 0)
 	resp = new(types.UserRepoListResponse)
 	size := req.Size
@@ -39,7 +39,7 @@ func (l *UserRepoListLogic) UserRepoList(req *types.UserRepoListRequest, userIde
 	pageOffset := (page - 1) * size
 
 	l.svcCtx.Engine.ShowSQL(true)
-	err = l.svcCtx.Engine.Table("user_repository").Where("parent_id = ? AND user_identity = ? ", req.Id, userIdentity).
+	err = l.svcCtx.Engine.Table("user_repository").Where("parent_id = ? AND user_identity = ? ", req.Id, Identity).
 		Select("user_repository.id, user_repository.identity, user_repository.repository_identity," +
 			"user_repository.ext, user_repository.filename, repository_pool.path, repository_pool.size").
 		Join("Left", "repository_pool", "user_repository.repository_identity = repository_pool.identity").
@@ -50,7 +50,7 @@ func (l *UserRepoListLogic) UserRepoList(req *types.UserRepoListRequest, userIde
 		return nil, err
 	}
 
-	count, err :=l.svcCtx.Engine.Table("user_repository").Where("parent_id = ? AND user_identity = ? AND (deleted_at IS NULL)", req.Id, userIdentity).Count(&models.UserRepository{})	
+	count, err :=l.svcCtx.Engine.Table("user_repository").Where("parent_id = ? AND user_identity = ? AND (deleted_at IS NULL)", req.Id, Identity).Count(&models.UserRepository{})	
 	if err != nil {
 		return nil, err
 	}

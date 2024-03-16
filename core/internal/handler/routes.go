@@ -13,6 +13,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodPost,
+				Path:    "/auth/refresh",
+				Handler: refreshAuthHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/from/:name",
 				Handler: CoreHandler(serverCtx),
@@ -26,6 +31,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/register/user",
 				Handler: RegisterUserHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/share/detail",
+				Handler: ShareDetailHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
@@ -51,13 +61,43 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/file/upload/chunk",
+					Handler: FileUploadChunkHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/file/upload/chunk/complete",
+					Handler: FileUploadChunkCompleteHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/file/upload/prepare",
+					Handler: fileUploadPrepareHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/user/file/delete",
 					Handler: UserFileDeleteHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/user/file/move",
+					Handler: userFileMoveHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
 					Path:    "/user/file/name/update",
 					Handler: UserFileNameUpdateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/file/save",
+					Handler: shareSaveHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/file/share",
+					Handler: shareFileHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

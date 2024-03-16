@@ -22,6 +22,7 @@ var (
 	CosSecretKey string
 	CosBucket    string
 	PageSize		 int = 20
+	TokenExpireTime int = 3600
 )
 
 func init() {
@@ -36,3 +37,4 @@ func init() {
 	CosSecretKey = os.Getenv("CosSecretKey")
 	CosBucket = os.Getenv("CosBucket")
 }
+

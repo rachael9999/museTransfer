@@ -26,9 +26,9 @@ func NewUserFileNameUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *UserFileNameUpdateLogic) UserFileNameUpdate(req *types.UserFileNameUpdateRequest, userIdentity string) (resp *types.UserFileNameUpdateResponse, err error) {
+func (l *UserFileNameUpdateLogic) UserFileNameUpdate(req *types.UserFileNameUpdateRequest, Identity string) (resp *types.UserFileNameUpdateResponse, err error) {
 	// check if the edited name contains in folder
-	cnt, err := l.svcCtx.Engine.Where("filename = ? AND parent_id = (SELECT parent_id FROM user_repository ur WHERE ur.identity = ?) AND user_identity = ?", req.Filename, req.Identity, userIdentity).Count(&models.UserRepository{})
+	cnt, err := l.svcCtx.Engine.Where("filename = ? AND parent_id = (SELECT parent_id FROM user_repository ur WHERE ur.identity = ?) AND user_identity = ?", req.Filename, req.Identity, Identity).Count(&models.UserRepository{})
 	if (cnt > 0) {
 		return nil, errors.New("the name has been used")
 	}
@@ -43,7 +43,7 @@ func (l *UserFileNameUpdateLogic) UserFileNameUpdate(req *types.UserFileNameUpda
 		UpdatedAt: time.Now(),
 	}
 	_, err = l.svcCtx.Engine.Table(&models.UserRepository{}).
-	Where("identity = ? AND user_identity = ?", req.Identity, userIdentity).
+	Where("identity = ? AND user_identity = ?", req.Identity, Identity).
 	Update(data)
 
 	if err != nil {

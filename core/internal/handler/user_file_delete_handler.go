@@ -18,7 +18,7 @@ func UserFileDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := logic.NewUserFileDeleteLogic(r.Context(), svcCtx)
-		resp, err := l.UserFileDelete(&req, r.Header.Get("UserIdentity"))
+		resp, err := l.UserFileDelete(&req, r.Header.Get("Identity"))
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

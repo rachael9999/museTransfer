@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"cloud-disk/core/define"
 	"cloud-disk/core/helper"
 	"cloud-disk/core/internal/svc"
 	"cloud-disk/core/internal/types"
@@ -10,8 +11,8 @@ import (
 
 	"errors"
 
-	"golang.org/x/crypto/bcrypt"
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserLoginLogic struct {
@@ -43,13 +44,20 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 			return nil, errors.New("incorrect password")
 	}
 
-	token, err := helper.GenerateToken(user.Id, user.Identity, user.Name)
+	token, err := helper.GenerateToken(user.Id, user.Identity, user.Name, define.TokenExpireTime)
 
+	if err != nil {
+		return nil, err
+	}
+
+	// refresh token
+	refreshToken, err := helper.GenerateToken(user.Id, user.Identity, user.Name, define.TokenExpireTime * 2)
 	if err != nil {
 		return nil, err
 	}
 
 	resp = new(types.LoginReply)
 	resp.Token = token
+	resp.RefreshToken = refreshToken
 	return
 }

@@ -27,9 +27,9 @@ func NewUserFolderCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *UserFolderCreateLogic) UserFolderCreate(req *types.UserFolderCreateRequest, userIdentity string) (resp *types.UserFolderCreateResponse, err error) {
+func (l *UserFolderCreateLogic) UserFolderCreate(req *types.UserFolderCreateRequest, Identity string) (resp *types.UserFolderCreateResponse, err error) {
 	// check if the edited name contains in folder
-	cnt, err := l.svcCtx.Engine.Where("filename = ? AND parent_id = ? AND user_identity = ?", req.Filename, req.ParentId, userIdentity).Count(&models.UserRepository{})
+	cnt, err := l.svcCtx.Engine.Where("filename = ? AND parent_id = ? AND user_identity = ?", req.Filename, req.ParentId, Identity).Count(&models.UserRepository{})
 	if (cnt > 0) {
 		return nil, errors.New("the name has been used")
 	}
@@ -41,7 +41,7 @@ func (l *UserFolderCreateLogic) UserFolderCreate(req *types.UserFolderCreateRequ
 	// crt folder
 	data := &models.UserRepository{
 		Identity: helper.UUID(),
-		UserIdentity: userIdentity,
+		UserIdentity: Identity,
 		ParentId: req.ParentId,
 		Filename: req.Filename,
 		CreatedAt: time.Now(),

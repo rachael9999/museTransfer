@@ -19,6 +19,12 @@ service core-api {
 	// register user
 	@handler RegisterUser
 	post /register/user (RegisterUserRequest) returns (RegisterUserResponse)
+
+	@handler ShareDetail
+	get /share/detail (ShareDetailRequest) returns (ShareDetailResponse)
+
+	@handler refreshAuth
+	post /auth/refresh (RefreshAuthRequest) returns (RefreshAuthResponse)
 }
 
 @server (
@@ -45,6 +51,24 @@ service core-api {
 
 	@handler UserFileDelete
 	post /user/file/delete (UserFileDeleteRequest) returns (UserFileDeleteResponse)
+
+	@handler userFileMove
+	put /user/file/move (UserFileMoveRequest) returns (UserFileMoveResponse)
+
+	@handler shareFile
+	post /user/file/share (UserFileShareRequest) returns (UserFileShareResponse)
+
+	@handler shareSave
+	post /user/file/save (UserFileSaveRequest) returns (UserFileSaveResponse)
+
+	@handler fileUploadPrepare
+	post /file/upload/prepare (fileUploadPrepareRequest) returns (fileUploadPrepareResponse)
+
+	@handler FileUploadChunk
+	post /file/upload/chunk (FileUploadChunkRequest) returns (FileUploadChunkReply)
+
+	@handler FileUploadChunkComplete
+	post /file/upload/chunk/complete (FileUploadChunkCompleteRequest) returns (FileUploadChunkCompleteReply)
 }
 
 type LoginRequest {
@@ -53,8 +77,9 @@ type LoginRequest {
 }
 
 type LoginReply {
-	Token string `json:"token"`
-	Error string `json:"error,omitempty"`
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+	Error        string `json:"error,omitempty"`
 }
 
 type UserDetailRequest {
@@ -168,5 +193,101 @@ type UserFileDeleteRequest {
 
 type UserFileDeleteResponse {
 	Error string `json:"error,omitempty"`
+}
+
+type UserFileListRequest {
+	Id   int64 `json:"id, optional"`
+	Page int   `json:"page, optional"`
+	Size int   `json:"size, optional"`
+}
+
+type UserFileListResponse {
+	Error string          `json:"error,omitempty"`
+	List  []*UserRepoList `json:"list"`
+}
+
+type UserFileMoveRequest {
+	Identity string `json:"identity"`
+	ParentId string `json:"parent_Id"`
+}
+
+type UserFileMoveResponse {
+	Error string `json:"error,omitempty"`
+}
+
+type UserFileShareRequest {
+	UserRepositoryIdentity string `json:"user_repository_identity"`
+	ExpireTime             int    `json:"expire_time"`
+}
+
+type UserFileShareResponse {
+	Identity string `json:"identity"`
+	Error    string `json:"error,omitempty"`
+}
+
+type ShareDetailRequest {
+	Identity string `json:"identity"`
+}
+
+type ShareDetailResponse {
+	RepositoryIdentity string `json:"repository_identity"`
+	Filename           string `json:"filename"`
+	Ext                string `json:"ext"`
+	Size               int    `json:"size"`
+	Path               string `json:"path"`
+}
+
+type UserFileSaveRequest {
+	RepositoryIdentity string `json:"repository_identity"`
+	ParentId           int    `json:"parent_id"`
+}
+
+type UserFileSaveResponse {
+	Identity string `json:"identity"`
+	Error    string `json:"error,omitempty"`
+}
+
+type RefreshAuthRequest {
+	RefreshToken string `json:"refresh_token"`
+}
+
+type RefreshAuthResponse {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+	Error        string `json:"error,omitempty"`
+}
+
+type fileUploadPrepareRequest {
+	MD5      string `json:"md5"`
+	Filename string `json:"filename"`
+	Ext      string `json:"ext"`
+}
+
+type fileUploadPrepareResponse {
+	Identity string `json:"identity"`
+	UploadId string `json:"upload_id"`
+	Key      string `json:"key"`
+	Error    string `json:"error,omitempty"`
+}
+
+type FileUploadChunkCompleteRequest {
+	Key        string      `json:"key"`
+	UploadId   string      `json:"upload_id"`
+	CosObjects []CosObject `json:"cos_objects"`
+}
+
+type CosObject {
+	PartNumber int    `json:"part_number"`
+	Etag       string `json:"etag"`
+}
+
+type FileUploadChunkCompleteReply {
+	Identity string `json:"identity"`
+}
+
+type FileUploadChunkRequest {}
+
+type FileUploadChunkReply {
+	Etag string `json:"etag"` // MD5
 }
 

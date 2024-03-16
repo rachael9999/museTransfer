@@ -1,12 +1,16 @@
 package helper
 
 import (
+	"bytes"
 	"context"
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"path"
+	"strconv"
+	"strings"
 
 	"cloud-disk/core/define"
 
@@ -27,11 +31,12 @@ func Md5(s string) string {
 	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }
 
-func GenerateToken(id int, identity string, name string) (string, error) {
+func GenerateToken(id int, identity string, name string, sec int) (string, error) {
 	uc := define.UserClaim{
 		Id:       id,
 		Identity: identity,
 		Name: 	 name,
+		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Second * time.Duration(sec)).Unix()},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, uc)
@@ -42,6 +47,21 @@ func GenerateToken(id int, identity string, name string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func ParseToken(tokenString string) (*define.UserClaim, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &define.UserClaim{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(define.JwtKey), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(*define.UserClaim)
+	if !ok {
+		return nil, errors.New("token is invalid")
+	}
+	return claims, nil
+
 }
 
 func Code() string {
@@ -107,4 +127,92 @@ func AnalyzeToken(token string) (*define.UserClaim, error) {
 	}
 	return uc, err
 
+}
+
+func CosInitPart(ext string) (string, string, error) {
+	u, _ := url.Parse(define.CosBucket)
+	b := &cos.BaseURL{BucketURL: u}
+	client := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  define.CosSecretId,
+			SecretKey: define.CosSecretKey,
+		},
+	})
+	key := "cloud-disk/" + UUID() + ext
+	v, _, err := client.Object.InitiateMultipartUpload(context.Background(), key, nil)
+	if err != nil {
+		return "", "", err
+	}
+	return key, v.UploadID, nil
+}
+
+func CosUpload(r *http.Request) (string, error) {
+	u, _ := url.Parse(define.CosBucket)
+	b := &cos.BaseURL{BucketURL: u}
+	client := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  define.CosSecretId,
+			SecretKey: define.CosSecretKey,
+		},
+	})
+
+	file, fileHeader, err := r.FormFile("file")
+	key := "cloud-disk/" + UUID() + path.Ext(fileHeader.Filename)
+
+	_, err = client.Object.Put(
+		context.Background(), key, file, nil,
+	)
+	if err != nil {
+		panic(err)
+	}
+	return define.CosBucket + "/" + key, nil
+}
+
+func CosPartUpload(r *http.Request) (string, error) {
+	u, _ := url.Parse(define.CosBucket)
+	b := &cos.BaseURL{BucketURL: u}
+	client := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  define.CosSecretId,
+			SecretKey: define.CosSecretKey,
+		},
+	})
+	key := r.PostForm.Get("key")
+	UploadID := r.PostForm.Get("upload_id")
+	partNumber, err := strconv.Atoi(r.PostForm.Get("part_number"))
+	if err != nil {
+		return "", err
+	}
+	f, _, err := r.FormFile("file")
+	if err != nil {
+		return "", err
+	}
+	buf := bytes.NewBuffer(nil)
+	io.Copy(buf, f)
+
+	resp, err := client.Object.UploadPart(
+		context.Background(), key, UploadID, partNumber, bytes.NewReader(buf.Bytes()), nil,
+	)
+	if err != nil {
+		return "", err
+	}
+	return strings.Trim(resp.Header.Get("ETag"), "\""), nil
+}
+
+func CosPartUploadComplete(key, uploadId string, co []cos.Object) error {
+	u, _ := url.Parse(define.CosBucket)
+	b := &cos.BaseURL{BucketURL: u}
+	client := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  define.CosSecretId,
+			SecretKey: define.CosSecretKey,
+		},
+	})
+
+	opt := &cos.CompleteMultipartUploadOptions{}
+	opt.Parts = append(opt.Parts, co...)
+	_, _, err := client.Object.CompleteMultipartUpload(
+		context.Background(), key, uploadId, opt,
+	)
+	return err
 }
